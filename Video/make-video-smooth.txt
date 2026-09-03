@@ -1,0 +1,37 @@
+1. Get a video you like and want to use. You can get one free from sites like Pexels, or AI video tools, or record one yourself.
+Slow motion works great, but isn't necessary.
+
+2. Make sure it's landscape (16:9) aspect ratio, and cut it down to 3-7 seconds in length. You can easily do both with an online video editor.
+Export your video in .mp4 format, or use an online .mp4 converter tool.
+
+3. You'll need to use something called FFmpeg. Just google "ffmpeg online" and you'll find an online tool.
+For example, you can use this one: ffmpeg-online.vercel.app
+
+Drag your video inside the tool. In the field that says "please enter output options" put in one of the the following commands:
+
+High quality:   -c:v libx264 -pix_fmt yuv420p -profile:v high -preset veryslow -movflags +faststart -an -vf fps=24 -x264-params "scenecut=0" -g 1 -crf 19
+Medium quality: -c:v libx264 -pix_fmt yuv420p -profile:v high -preset veryslow -movflags +faststart -an -vf fps=24 -x264-params "scenecut=0" -g 4 -crf 20
+Lower quality:  -c:v libx264 -pix_fmt yuv420p -profile:v high -preset veryslow -movflags +faststart -an -vf fps=24 -x264-params "scenecut=0" -g 8 -crf 20
+
+The high quality command will give you the best quality and smoothest scrolling at the biggest file size.
+The lower quality one still looks good, and the file size is about half compared to high. But scrolling might be less smooth especially on some older devices.
+The medium quality is the perfect compromise. Personally I use Medium or High. You can test and see which one you like best.
+
+The 3 commands are identical except for the last two parameters, g and crf.
+The lower the g, the smoother the scrolling. The lower the crf, the higher the picture quality.
+Both come at the cost of a higher file size. You can test even lower crf if you'd like the best picture quality, but I'd never go below crf 16 for our use case.
+
+Click "run" and wait for processing. Then click "download file" and save the video to your machine. Upload this video on your site and use it.
+Enjoy your super smooth video scrolling experience!
+
+
+
+
+
+Sites I used to create my demo videos:
+1. https://www.pexels.com/videos/ - for awesome copyright-free stock videos. Pixabay or Envato are other good options.
+2. https://www.klingai.com/ - an AI tool that allows you to generate a short video starting from an image.
+
+I recommend following the steps above when optimizing your own scroll video.
+Note that the design-1.mp4 video inside this folder is already processed using the "High quality" command above.
+But if you use a different video, you will need to process it yourself. Just follow the steps, it's super easy!

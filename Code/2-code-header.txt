@@ -1,0 +1,64 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // If you use something other than the Astra theme, you can edit this HEADER_SELECTOR value
+  // In your browser, inspect your transparent header and target it via a CSS class or ID
+  const HEADER_SELECTOR = '.ast-theme-transparent-header #masthead';
+
+  // That's it, you can stop editing here! Enjoy!
+  const BIG_CONTAINER = '.maker-big-container';
+  const SMALL_CONTAINER = '.maker-small-container';
+
+  const header = document.querySelector(HEADER_SELECTOR);
+  const wrapper = document.querySelector(BIG_CONTAINER);
+  const firstParent = document.querySelector('.e-parent');
+  if (!header || !wrapper || wrapper !== firstParent) { return; }
+
+  const style = document.createElement('style');
+  style.textContent = `
+    ${HEADER_SELECTOR}.header--float {
+      position: fixed;
+    }
+    ${HEADER_SELECTOR}.header--locked {
+      position: absolute;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const updateHeaderState = () => {
+    const rect = wrapper.getBoundingClientRect();
+
+    header.classList.remove('header--float', 'header--locked');
+    header.style.top = '0';
+
+    if (rect.bottom > window.innerHeight) {
+      header.classList.add('header--float');
+    } else {
+      header.classList.add('header--locked');
+      const stickyDiv = wrapper.querySelector(SMALL_CONTAINER);
+      if (stickyDiv) {
+        const stickyRect = stickyDiv.getBoundingClientRect();
+        const docTop = window.scrollY + stickyRect.top + stickyRect.height - window.innerHeight;
+        header.style.top = `${docTop}px`;
+      }
+    }
+  };
+  updateHeaderState();
+
+  let ticking = false;
+  const onScroll = () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateHeaderState();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  // Code by WP Maker - See youtube.com/@wpmaker for the complete scroll effect tutorial
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', updateHeaderState);
+
+});
+</script>

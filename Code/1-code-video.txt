@@ -1,0 +1,105 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // You can edit the VIDEO_END_ADJUST value to change the point during scroll at which the video stops playing
+  // Example - set it to 0.5 to stop playing half-a-screen-height later, or -0.5 to stop playing half-a-screen-height earlier
+  const VIDEO_END_ADJUST = 0.5;
+
+  // That's it, you can stop editing here! Enjoy!
+  const BIG_CONTAINER = 'maker-big-container';
+  const SMALL_CONTAINER = 'maker-small-container';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const endMarkerOffset = () => window.innerHeight * VIDEO_END_ADJUST;
+
+  const initScrollScrub = (wrapper, video) => {
+    return ScrollTrigger.create({
+      trigger: wrapper,
+      start: 'top top',
+      end: `bottom bottom-=${endMarkerOffset()}px`,
+      scrub: true,
+      markers: false,
+      onUpdate(self) {
+        if (video.duration) {
+          video.currentTime = self.progress * video.duration;
+        }
+      }
+    });
+  };
+
+  const wrappers = document.querySelectorAll('.' + BIG_CONTAINER);
+
+  wrappers.forEach(wrapper => {
+    const video = wrapper.querySelector('video');
+    if (!video) return;
+
+    const childDivs = wrapper.querySelectorAll(':scope > div');
+    childDivs.forEach(div => {
+      if (div.querySelector('.elementor-widget-video') && !div.classList.contains(SMALL_CONTAINER))
+        div.classList.add(SMALL_CONTAINER);
+    });
+
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('preload', 'auto');
+    video.load();
+
+    const setupScrub = () => {
+      wrapper._scrubTrigger = initScrollScrub(wrapper, video);
+    };
+
+    if (video.readyState >= 2) {
+      setupScrub();
+    } else {
+      video.addEventListener('loadeddata', setupScrub, { once: true });
+    }
+
+    video.addEventListener('play', () => video.pause());
+    video.addEventListener('click', e => e.preventDefault());
+  });
+
+  const rebuildTriggers = () => {
+    wrappers.forEach(wrapper => {
+      const trigger = wrapper._scrubTrigger;
+      if (!trigger) return;
+      trigger.kill();
+
+      const video = wrapper.querySelector('video');
+      wrapper._scrubTrigger = initScrollScrub(wrapper, video);
+    });
+  };
+
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      rebuildTriggers();
+    }, 200);
+  });
+
+  // Code by WP Maker - See youtube.com/@wpmaker for the complete scroll effect tutorial
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+});
+</script>
+
+<style>
+.maker-small-container {
+  position: sticky;
+  top: 0;
+}
+
+.maker-big-container video {
+  min-height: 100vh;
+  object-position: top center;
+}
+
+@media (max-width: 921px) {
+  .maker-big-container video {
+    object-position: center center;
+  }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>

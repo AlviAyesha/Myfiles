@@ -1,0 +1,43 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // You can edit the SCROLL_SPEED value to change how fast the page scrolls when clicking the button
+  // Example - set it to 1 for the scroll speed to be one-full-screen-height per second
+  const SCROLL_SPEED = 1.5;
+
+  // That's it, you can stop editing here! Enjoy!
+  const BIG_CONTAINER = '.maker-big-container';
+
+  gsap.registerPlugin(ScrollToPlugin);
+
+  document.querySelectorAll(`${BIG_CONTAINER} a[href^="#"]`).forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.documentElement.style.scrollBehavior = 'auto';
+
+      var targetID = link.getAttribute('href');
+      var target = document.querySelector(targetID);
+      if (target) {
+        var startY = window.pageYOffset || document.documentElement.scrollTop;
+        var endY = target.getBoundingClientRect().top + startY;
+        var distance = Math.abs(endY - startY);
+        var speed = window.innerHeight * SCROLL_SPEED;
+        var duration = distance / speed;
+
+        gsap.to(window, {
+          duration: duration,
+          ease: 'sine.in',
+          scrollTo: { y: target, autoKill: false },
+          onComplete: function() {
+            document.documentElement.style.scrollBehavior = '';
+          }
+        });
+      }
+    });
+  });
+
+  // Code by WP Maker - See youtube.com/@wpmaker for the complete scroll effect tutorial
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollToPlugin.min.js"></script>
